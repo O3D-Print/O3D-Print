@@ -44,6 +44,7 @@ body{
 }
 
 .barra ul li a{
+    margin-top: 20px;
     padding: 10px;
     border-radius: 10px;
     color: black;
