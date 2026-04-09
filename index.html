@@ -3,53 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O3D-Print | Modelado e Impresión 3D</title>
+    <title>O3D-PRINT | Catálogo de Impresión 3D</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">O3D<span>-PRINT</span></a>
-            <div id="cart-toggle" class="cart-icon">
-                🛒 <span id="cart-count" class="badge">0</span>
+            <div class="cart-trigger" onclick="toggleCart()">
+                <span class="cart-label">MI CESTA</span>
+                <span id="cart-count" class="badge">0</span>
             </div>
         </div>
     </nav>
 
     <header class="hero">
-        <div class="hero-content">
-            <h1>O3D-PRINT</h1>
-            <p>Tú envías el modelo, yo lo imprimo. <br>Servicio de fabricación aditiva profesional.</p>
+        <div data-aos="zoom-out" data-aos-duration="1500">
+            <span class="hero-tag">SERVICIOS ADITIVOS</span>
+            <h1>MATERIALIZA <br> TUS IDEAS</h1>
+            <a href="#catalogo" class="btn-scroll">Explorar Catálogo ↓</a>
         </div>
     </header>
 
-    <main class="container">
-        <h2 class="section-title">Modelos Disponibles</h2>
+    <main id="catalogo" class="container">
         <div class="product-grid" id="product-grid">
             </div>
     </main>
 
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Tu Pedido</h2>
-                <span class="close-modal">&times;</span>
+    <div id="cart-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>Tu Pedido</h2>
+            <button class="close-btn" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-content">
             </div>
-            <div id="cart-items" class="cart-body"></div>
-            <div class="cart-footer">
-                <div class="total-row">
-                    <span>Total a pagar:</span>
-                    <span>$<span id="total-price">0</span></span>
-                </div>
-                <div id="paypal-button-container"></div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total estimado:</span>
+                <span id="total-price">$0</span>
             </div>
+            <button class="btn-checkout" onclick="procesarPago()">PROCEDER AL PAGO</button>
         </div>
     </div>
 
+    <div id="form-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Confirmar Detalles</h2>
+            <p>Rellena esto después de realizar el pago en PayPal.</p>
+            <div class="input-group">
+                <input type="text" id="u-nombre" placeholder="Nombre completo" required>
+                <input type="email" id="u-email" placeholder="Correo electrónico" required>
+                <input type="text" id="u-id-pago" placeholder="ID de Transacción (PayPal)" required>
+                <textarea id="u-notas" placeholder="Especificaciones (colores, tamaños, acabados...)"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-send" onclick="enviarPedido()">ENVIAR A O3D-PRINT</button>
+                <button class="btn-cancel" onclick="cerrarModal()">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    <footer class="footer-copyright">
+    <p>&copy; 2026 O3D-Print. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="script.js"></script>
+    <script>AOS.init({ once: true });</script>
 </body>
 </html>
