@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O3D-Print | Modelado e Impresión 3D</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">O3D<span>-PRINT</span></a>
+            <div id="cart-toggle" class="cart-icon">
+                🛒 <span id="cart-count" class="badge">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>O3D-PRINT</h1>
+            <p>Tú envías el modelo, yo lo imprimo. <br>Servicio de fabricación aditiva profesional.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2 class="section-title">Modelos Disponibles</h2>
+        <div class="product-grid" id="product-grid">
+            </div>
+    </main>
+
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tu Pedido</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div id="cart-items" class="cart-body"></div>
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span>Total a pagar:</span>
+                    <span>$<span id="total-price">0</span></span>
+                </div>
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
