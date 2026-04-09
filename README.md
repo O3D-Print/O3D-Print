@@ -24,7 +24,6 @@
 ## ⚡ Características del Catálogo O3D-Print
 *   **Catálogo Curado:** Productos impresos en 3D listos para comprar.
 *   **Alta Calidad:** Impresiones de precisión con materiales duraderos.
-*   **Materiales:** PLA, PETG, Resina, y opciones personalizadas.
 *   **Pedidos Especiales:** Cotización rápida para piezas técnicas o prototipos.
 
 ---
