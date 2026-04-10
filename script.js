@@ -73,9 +73,67 @@ function procesarPago() {
     const total = carrito.reduce((sum, p) => sum + p.precio, 0);
     const articulos = carrito.map(i => i.nombre).join(", ");
 
+    // GUARDADO CRÍTICO EN MEMORIA
     localStorage.setItem('totalO3D', total);
     localStorage.setItem('articulosO3D', articulos);
     
-    // Redirección limpia a la carpeta pago
     window.location.href = './pago/';
+}
+
+// FUNCIONES PARA EL PEDIDO PERSONALIZADO
+function abrirModalPersonalizado() {
+    document.getElementById('modal-personalizado').style.display = 'flex';
+}
+
+function cerrarModalPersonalizado() {
+    document.getElementById('modal-personalizado').style.display = 'none';
+}
+
+async function enviarPedidoPersonalizado() {
+    const nombre = document.getElementById('custom-nombre').value;
+    const email = document.getElementById('custom-email').value;
+    const idea = document.getElementById('custom-idea').value;
+
+    if (!nombre || !email || !idea) {
+        return alert("Por favor, rellena todos los campos para poder ayudarte.");
+    }
+
+    const datos = {
+        nombre: nombre,
+        email: email,
+        notas: idea,
+        total: "PRESUPUESTO PENDIENTE",
+        articulos: "SOLICITUD DE DISEÑO PERSONALIZADO",
+        estado: "INFO_SOLICITADA"
+    };
+
+    // Usamos el mismo SCRIPT_URL de Google que ya tienes
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyulcHYSz_OD3GRKXU7RCZkxFm9pY5Xi_afdZJW_BoyEI0hK0WaWDYV3Sy1We4Sq9tf/exec";
+
+    alert("¡Solicitud enviada! En breve revisaremos tu idea y te escribiremos a " + email);
+
+    try {
+        await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify(datos) 
+        });
+        
+        // Limpiamos y cerramos
+        document.getElementById('custom-nombre').value = "";
+        document.getElementById('custom-email').value = "";
+        document.getElementById('custom-idea').value = "";
+        cerrarModalPersonalizado();
+        
+    } catch (e) {
+        console.log("Error al enviar solicitud");
+    }
+}
+
+function abrirModalPersonalizado() {
+    document.getElementById('modal-personalizado').style.display = 'flex';
+}
+
+function cerrarModalPersonalizado() {
+    document.getElementById('modal-personalizado').style.display = 'none';
 }

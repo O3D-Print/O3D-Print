@@ -7,10 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
 </head>
 <body>
 
@@ -33,44 +30,49 @@
     </header>
 
     <main id="catalogo" class="container">
+        
         <div class="product-grid" id="product-grid"></div>
+
+        <div class="custom-cta" data-aos="fade-up" style="text-align: center; margin: 100px auto 60px; max-width: 600px;">
+            <h2 style="font-family: 'Orbitron'; margin-bottom: 10px;">¿TIENES UNA IDEA ÚNICA?</h2>
+            <p style="color: #666; margin-bottom: 25px; font-size: 0.9rem;">Imprimimos tus archivos STL o diseños a medida bajo presupuesto.</p>
+            
+            <button class="btn-checkout" onclick="abrirModalPersonalizado()">
+                ✨ SOLICITAR DISEÑO PERSONALIZADO
+            </button>
+        </div>
+
     </main>
 
     <div id="cart-sidebar" class="sidebar">
         <div class="sidebar-header">
-            <h2>Tu Pedido</h2>
+            <h2 style="font-family: 'Orbitron'; font-size: 1.2rem;">Tu Pedido</h2>
             <button class="close-btn" onclick="toggleCart()">&times;</button>
         </div>
         <div id="cart-items" class="cart-content"></div>
         <div class="cart-footer">
-            <div class="total-row">
+            <div class="total-row" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold;">
                 <span>Total estimado:</span>
-                <span id="total-price">0€</span>
+                <span id="total-price" style="color: var(--primary);">0€</span>
             </div>
-            
-            
             <button id="btn-pagar-main" class="btn-checkout" onclick="procesarPago()">PROCEDER AL PAGO</button>
-
-            <div id="confirmacion-pago" style="display:none; margin-top: 15px; padding: 10px; border: 1px dashed #ff5f5f; text-align: center;">
-                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #fff;">¿Has pagado ya en la ventana de Ko-fi?</p>
-                <button class="btn-checkout" onclick="mostrarFormularioEnvio()" style="background: #28a745;">SÍ, RELLENAR DATOS</button>
-            </div>
         </div>
     </div>
 
-    <div id="form-modal" class="modal-overlay">
+    <div id="modal-personalizado" class="modal-overlay">
         <div class="modal-card">
-            <h2>Confirmar Detalles</h2>
-            <p>Rellena esto después de realizar el pago en Ko-fi.</p>
+            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 10px;">DISEÑO A MEDIDA</h2>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 25px;">Cuéntanos qué necesitas y te daremos presupuesto.</p>
+            
             <div class="input-group">
-                <input type="text" id="u-nombre" placeholder="Nombre completo" required>
-                <input type="email" id="u-email" placeholder="Correo electrónico" required>
-                <input type="text" id="u-id-pago" placeholder="Tu nombre en Ko-fi o Email" required>
-                <textarea id="u-notas" placeholder="Especificaciones (colores, tamaños, acabados...)"></textarea>
+                <input type="text" id="custom-nombre" placeholder="Tu nombre completo" required>
+                <input type="email" id="custom-email" placeholder="Correo electrónico" required>
+                <textarea id="custom-idea" placeholder="Describe tu idea: dimensiones, colores, uso..." style="height: 120px; resize: none;"></textarea>
             </div>
-            <div class="modal-actions">
-                <button class="btn-send" onclick="enviarPedido()">ENVIAR PEDIDO</button>
-                <button class="btn-cancel" onclick="cerrarModal()">CANCELAR</button>
+            
+            <div class="modal-actions" style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-send" onclick="enviarPedidoPersonalizado()">ENVIAR SOLICITUD</button>
+                <button class="btn-cancel" onclick="cerrarModalPersonalizado()">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -79,9 +81,55 @@
         <p>&copy; 2026 O3D-Print. Todos los derechos reservados.</p>
     </footer>
     
-    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="script.js"></script>
-    <script>AOS.init({ once: true });</script>
+    <script>
+        AOS.init({ once: true });
+
+        // Funciones para el Modal Personalizado que deben estar disponibles
+        function abrirModalPersonalizado() {
+            document.getElementById('modal-personalizado').style.display = 'flex';
+        }
+
+        function cerrarModalPersonalizado() {
+            document.getElementById('modal-personalizado').style.display = 'none';
+        }
+
+        async function enviarPedidoPersonalizado() {
+            const nombre = document.getElementById('custom-nombre').value;
+            const email = document.getElementById('custom-email').value;
+            const idea = document.getElementById('custom-idea').value;
+
+            if (!nombre || !email || !idea) return alert("Por favor, rellena todos los campos.");
+
+            const datos = {
+                nombre: nombre,
+                email: email,
+                notas: idea,
+                total: "PRESUPUESTO PENDIENTE",
+                articulos: "PEDIDO PERSONALIZADO",
+                estado: "SOLICITUD_INFO"
+            };
+
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyulcHYSz_OD3GRKXU7RCZkxFm9pY5Xi_afdZJW_BoyEI0hK0WaWDYV3Sy1We4Sq9tf/exec";
+
+            alert("¡Solicitud enviada! Nos pondremos en contacto contigo pronto.");
+            
+            try {
+                await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify(datos) 
+                });
+                cerrarModalPersonalizado();
+                // Limpiar campos
+                document.getElementById('custom-nombre').value = "";
+                document.getElementById('custom-email').value = "";
+                document.getElementById('custom-idea').value = "";
+            } catch (e) {
+                alert("Error al enviar. Inténtalo de nuevo.");
+            }
+        }
+    </script>
 </body>
 </html>

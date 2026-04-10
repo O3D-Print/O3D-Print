@@ -190,3 +190,32 @@ body {
     padding: 20px;
     border-top: 1px solid #eee;
 }
+
+/* Ajuste para que el modal personalizado use el mismo estilo que el de pago */
+#modal-personalizado .modal-card {
+    background: var(--card);
+    padding: 40px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid var(--primary);
+    text-align: center;
+}
+
+/* Reutilizamos tus inputs oscuros */
+#modal-personalizado input, 
+#modal-personalizado textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #000;
+    border: 1px solid var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+#modal-personalizado textarea {
+    height: 120px;
+    resize: none;
+}
