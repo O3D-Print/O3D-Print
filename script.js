@@ -1,5 +1,3 @@
-const PAYPAL_LINK = "https://www.paypal.me/empresao3d/";
-
 const productos = [
     { id: 1, nombre: "Llavero personalizado", precio: 1, img: "img/Llavero.jpeg" },
     { id: 2, nombre: "Base de carga Xiaomi redmi watch 5, 5 lite y 5 active", precio: 3, img: "img/Reloj.jpeg" },
@@ -12,26 +10,27 @@ let carrito = [];
 // Cargar catálogo al inicio
 window.onload = () => {
     const grid = document.getElementById('product-grid');
-    productos.forEach(p => {
-        grid.innerHTML += `
-            <div class="card" data-aos="fade-up">
-                <div class="img-container">
-                    ${p.img ? `<img src="${p.img}" alt="${p.nombre}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">` : ''}
-                    <span class="img-placeholder" style="${p.img ? 'display:none;' : 'display:block;'}">O3D-PRINT</span>
+    if(grid) {
+        productos.forEach(p => {
+            grid.innerHTML += `
+                <div class="card" data-aos="fade-up">
+                    <div class="img-container">
+                        ${p.img ? `<img src="${p.img}" alt="${p.nombre}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">` : ''}
+                        <span class="img-placeholder" style="${p.img ? 'display:none;' : 'display:block;'}">O3D-PRINT</span>
+                    </div>
+                    <h3>${p.nombre}</h3>
+                    <p class="price">${p.precio}€</p>
+                    <button class="btn-add" onclick="agregarAlCarrito(${p.id})">Añadir a la Cesta</button>
                 </div>
-                <h3>${p.nombre}</h3>
-                <p class="price">${p.precio}€</p>
-                <button class="btn-add" onclick="agregarAlCarrito(${p.id})">Añadir a la Cesta</button>
-            </div>
-        `;
-    });
+            `;
+        });
+    }
 };
 
 function agregarAlCarrito(id) {
     const p = productos.find(x => x.id === id);
     carrito.push(p);
     actualizarCarrito();
-    // Abrir sidebar automáticamente al añadir
     document.getElementById('cart-sidebar').classList.add('active');
 }
 
@@ -54,14 +53,14 @@ function actualizarCarrito() {
             <div class="cart-item">
                 <div>
                     <h4>${item.nombre}</h4>
-                    <p style="color:var(--primary)">$${item.precio}</p>
+                    <p style="color:var(--primary)">${item.precio}€</p>
                 </div>
                 <button class="btn-remove" onclick="eliminarDelCarrito(${index})">Eliminar</button>
             </div>
         `;
     });
 
-    totalDisplay.innerText = `$${total}`;
+    totalDisplay.innerText = `${total}€`;
     countBadge.innerText = carrito.length;
 }
 
@@ -69,24 +68,32 @@ function toggleCart() {
     document.getElementById('cart-sidebar').classList.toggle('active');
 }
 
-// FLUJO DE PAGO
+// FLUJO DE PAGO CON KO-FI
 function procesarPago() {
     if (carrito.length === 0) return alert("La cesta está vacía");
     
+    // 1. Calculamos el total y los nombres de los productos
     const total = carrito.reduce((sum, p) => sum + p.precio, 0);
+    const articulos = carrito.map(i => i.nombre).join(", ");
+
+    // 2. Guardamos los datos en localStorage (memoria del navegador)
+    localStorage.setItem('totalO3D', total);
+    localStorage.setItem('articulosO3D', articulos);
     
-    // 1. Abrir PayPal en pestaña nueva
-    window.open(`${PAYPAL_LINK}${total}`, '_blank');
-    
-    // 2. Abrir formulario de la web
+    // 3. Redirigimos a tu nueva página de checkout
+    window.location.href = 'pago.html';
+}
+function mostrarFormularioEnvio() {
     document.getElementById('form-modal').style.display = 'flex';
 }
 
 function cerrarModal() {
     document.getElementById('form-modal').style.display = 'none';
+    // Volvemos a mostrar el botón de pago por si quiere corregir algo
+    document.getElementById('btn-pagar-main').style.display = 'block';
+    document.getElementById('confirmacion-pago').style.display = 'none';
 }
 
-// URL DE TU GOOGLE APPS SCRIPT (Cópiala de cuando publicaste el script como Aplicación Web)
 const SCRIPT_URL_GOOGLE = "https://script.google.com/macros/s/AKfycbyulcHYSz_OD3GRKXU7RCZkxFm9pY5Xi_afdZJW_BoyEI0hK0WaWDYV3Sy1We4Sq9tf/exec";
 
 async function enviarPedido() {
@@ -96,10 +103,9 @@ async function enviarPedido() {
     const notas = document.getElementById('u-notas').value;
 
     if (!nombre || !email || !idpago) {
-        return alert("Por favor, rellena todos los campos obligatorios.");
+        return alert("Por favor, rellena los campos obligatorios para el envío.");
     }
 
-    // Datos a enviar
     const datos = {
         nombre: nombre,
         email: email,
@@ -109,27 +115,17 @@ async function enviarPedido() {
         articulos: carrito.map(i => i.nombre).join(", ")
     };
 
-    // --- PASO 1: FEEDBACK INMEDIATO ---
-    alert(`¡Procesando pedido de ${nombre}! Pulsa OK para finalizar.`);
+    alert(`¡Gracias ${nombre}! Enviando datos a O3D-Print...`);
     
-    // --- PASO 2: LIMPIEZA TOTAL ---
-    // Reiniciamos el carrito
+    // Limpieza
     carrito = [];
     actualizarCarrito();
-    
-    // Cerramos el modal y el sidebar
     cerrarModal();
     if (document.getElementById('cart-sidebar').classList.contains('active')) {
         toggleCart();
     }
     
-    // REINICIAR EL FORMULARIO (Vaciar los inputs)
-    document.getElementById('u-nombre').value = "";
-    document.getElementById('u-email').value = "";
-    document.getElementById('u-id-pago').value = "";
-    document.getElementById('u-notas').value = "";
-
-    // --- PASO 3: ENVÍO SILENCIOSO A GOOGLE ---
+    // Enviar a Google de forma silenciosa
     try {
         fetch(SCRIPT_URL_GOOGLE, {
             method: 'POST',
@@ -137,6 +133,6 @@ async function enviarPedido() {
             body: JSON.stringify(datos)
         });
     } catch (error) {
-        console.log("Error silencioso de red");
+        console.log("Error de red");
     }
 }

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personaliza tu Pedido | O3D-PRINT</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+    <style>
+        .final-container { max-width: 600px; margin: 80px auto; padding: 40px; background: var(--card); border: 1px solid var(--primary); border-radius: 20px; text-align: center; }
+        .success-icon { font-size: 4rem; color: #28a745; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="final-container" id="main-content" style="display:none;">
+        <div class="success-icon">✔</div>
+        <h2 style="font-family: 'Orbitron'; margin-bottom: 20px;">¡PAGO CONFIRMADO!</h2>
+        <p>Ahora, dinos cómo quieres tus piezas:</p>
+        
+        <div class="input-group" style="margin-top: 20px;">
+            <input type="text" id="u-nombre" placeholder="Tu nombre (como en Stripe)" required>
+            <textarea id="u-notas" placeholder="Colores, acabados, tamaños de cada pieza..." style="height: 150px;"></textarea>
+        </div>
+        
+        <button class="btn-send" onclick="enviarPersonalizacion()">ENVIAR ESPECIFICACIONES</button>
+    </div>
+
+    <script>
+        // 1. Lógica de Seguridad de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('pagado') === 'yes') {
+            // Guardamos la "llave" en el navegador
+            localStorage.setItem('acceso_permitido', 'true');
+            // Limpiamos la URL para que quede bonita
+            window.history.replaceState({}, document.title, "/pagado.html");
+            document.getElementById('main-content').style.display = 'block';
+        } else if (localStorage.getItem('acceso_permitido') === 'true') {
+            // Si ya entró antes con la llave, le dejamos estar
+            document.getElementById('main-content').style.display = 'block';
+        } else {
+            // Si intenta entrar a malas, fuera
+            alert("Acceso denegado. Primero debes realizar el pago.");
+            window.location.href = "index.html";
+        }
+
+        async function enviarPersonalizacion() {
+            const nombre = document.getElementById('u-nombre').value;
+            const notas = document.getElementById('u-notas').value;
+            const total = localStorage.getItem('totalO3D');
+            const articulos = localStorage.getItem('articulosO3D');
+
+            if (!nombre || !notas) return alert("Por favor, rellena los detalles.");
+
+            const datos = {
+                nombre: nombre,
+                notas: notas,
+                total: total + "€",
+                articulos: articulos,
+                estado: "PAGADO_STRIPE"
+            };
+
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyulcHYSz_OD3GRKXU7RCZkxFm9pY5Xi_afdZJW_BoyEI0hK0WaWDYV3Sy1We4Sq9tf/exec";
+
+            alert("¡Perfecto! Hemos recibido tus preferencias. Empezamos a imprimir.");
+            
+            // Enviamos todo por correo (vía Google Apps Script)
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(datos) });
+
+            // 2. Limpieza final: La variable vuelve a ser falsa
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

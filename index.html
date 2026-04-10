@@ -33,8 +33,7 @@
     </header>
 
     <main id="catalogo" class="container">
-        <div class="product-grid" id="product-grid">
-            </div>
+        <div class="product-grid" id="product-grid"></div>
     </main>
 
     <div id="cart-sidebar" class="sidebar">
@@ -42,37 +41,45 @@
             <h2>Tu Pedido</h2>
             <button class="close-btn" onclick="toggleCart()">&times;</button>
         </div>
-        <div id="cart-items" class="cart-content">
-            </div>
+        <div id="cart-items" class="cart-content"></div>
         <div class="cart-footer">
             <div class="total-row">
                 <span>Total estimado:</span>
-                <span id="total-price">$0</span>
+                <span id="total-price">0€</span>
             </div>
-            <button class="btn-checkout" onclick="procesarPago()">PROCEDER AL PAGO</button>
+            
+            
+            <button id="btn-pagar-main" class="btn-checkout" onclick="procesarPago()">PROCEDER AL PAGO</button>
+
+            <div id="confirmacion-pago" style="display:none; margin-top: 15px; padding: 10px; border: 1px dashed #ff5f5f; text-align: center;">
+                <p style="font-size: 0.8rem; margin-bottom: 10px; color: #fff;">¿Has pagado ya en la ventana de Ko-fi?</p>
+                <button class="btn-checkout" onclick="mostrarFormularioEnvio()" style="background: #28a745;">SÍ, RELLENAR DATOS</button>
+            </div>
         </div>
     </div>
 
     <div id="form-modal" class="modal-overlay">
         <div class="modal-card">
             <h2>Confirmar Detalles</h2>
-            <p>Rellena esto después de realizar el pago en PayPal.</p>
+            <p>Rellena esto después de realizar el pago en Ko-fi.</p>
             <div class="input-group">
                 <input type="text" id="u-nombre" placeholder="Nombre completo" required>
                 <input type="email" id="u-email" placeholder="Correo electrónico" required>
-                <input type="text" id="u-id-pago" placeholder="ID de Transacción (PayPal)" required>
+                <input type="text" id="u-id-pago" placeholder="Tu nombre en Ko-fi o Email" required>
                 <textarea id="u-notas" placeholder="Especificaciones (colores, tamaños, acabados...)"></textarea>
             </div>
             <div class="modal-actions">
-                <button class="btn-send" onclick="enviarPedido()">ENVIAR A O3D-PRINT</button>
+                <button class="btn-send" onclick="enviarPedido()">ENVIAR PEDIDO</button>
                 <button class="btn-cancel" onclick="cerrarModal()">CANCELAR</button>
             </div>
         </div>
     </div>
-    <footer class="footer-copyright">
-    <p>&copy; 2026 O3D-Print. Todos los derechos reservados.</p>
-    </footer>
 
+    <footer class="footer-copyright">
+        <p>&copy; 2026 O3D-Print. Todos los derechos reservados.</p>
+    </footer>
+    
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="script.js"></script>
     <script>AOS.init({ once: true });</script>
