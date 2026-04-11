@@ -7,16 +7,24 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">O3D<span>-PRINT</span></a>
-            <div class="cart-trigger" onclick="toggleCart()">
-                <span class="cart-label">MI CESTA</span>
-                <span id="cart-count" class="badge">0</span>
+            
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <a href="recursos/" class="btn-rec">RECURSOS</a>
+                
+                <div class="cart-trigger" onclick="toggleCart()">
+                    <span class="cart-label">MI CESTA</span>
+                    <span id="cart-count" class="badge">0</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -30,7 +38,6 @@
     </header>
 
     <main id="catalogo" class="container">
-        
         <div class="product-grid" id="product-grid"></div>
 
         <div class="custom-cta" data-aos="fade-up" style="text-align: center; margin: 100px auto 60px; max-width: 600px;">
@@ -41,7 +48,6 @@
                 ✨ SOLICITAR DISEÑO PERSONALIZADO
             </button>
         </div>
-
     </main>
 
     <div id="cart-sidebar" class="sidebar">
@@ -56,6 +62,8 @@
                 <span id="total-price" style="color: var(--primary);">0€</span>
             </div>
             <button id="btn-pagar-main" class="btn-checkout" onclick="procesarPago()">PROCEDER AL PAGO</button>
+            <br><br>
+            <button id="btn-correo-main" class="btn-correo" onclick="envMailObj()">ESCRIBIR POR CORREO</button>
         </div>
     </div>
 
@@ -63,13 +71,11 @@
         <div class="modal-card">
             <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 10px;">DISEÑO A MEDIDA</h2>
             <p style="font-size: 0.8rem; color: #888; margin-bottom: 25px;">Cuéntanos qué necesitas y te daremos presupuesto.</p>
-            
             <div class="input-group">
                 <input type="text" id="custom-nombre" placeholder="Tu nombre completo" required>
                 <input type="email" id="custom-email" placeholder="Correo electrónico" required>
                 <textarea id="custom-idea" placeholder="Describe tu idea: dimensiones, colores, uso..." style="height: 120px; resize: none;"></textarea>
             </div>
-            
             <div class="modal-actions" style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn-send" onclick="enviarPedidoPersonalizado()">ENVIAR SOLICITUD</button>
                 <button class="btn-cancel" onclick="cerrarModalPersonalizado()">CANCELAR</button>
@@ -86,7 +92,6 @@
     <script>
         AOS.init({ once: true });
 
-        // Funciones para el Modal Personalizado que deben estar disponibles
         function abrirModalPersonalizado() {
             document.getElementById('modal-personalizado').style.display = 'flex';
         }
@@ -122,7 +127,6 @@
                     body: JSON.stringify(datos) 
                 });
                 cerrarModalPersonalizado();
-                // Limpiar campos
                 document.getElementById('custom-nombre').value = "";
                 document.getElementById('custom-email').value = "";
                 document.getElementById('custom-idea').value = "";

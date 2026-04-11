@@ -137,3 +137,14 @@ function abrirModalPersonalizado() {
 function cerrarModalPersonalizado() {
     document.getElementById('modal-personalizado').style.display = 'none';
 }
+
+function envMailObj() {
+    if (carrito.length === 0) return alert("La cesta está vacía");
+    const total = carrito.reduce((sum, p) => sum + p.precio, 0);
+    const articulos = carrito.map(i => i.nombre).join(", ");
+    
+    localStorage.setItem('totalO3D', total);
+    localStorage.setItem('articulosO3D', articulos);
+    
+    window.location.href = './correo/?correo=yes';
+}

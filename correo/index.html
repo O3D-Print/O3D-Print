@@ -118,7 +118,7 @@
 <body>
     <div class="final-container" id="main-content" style="display:none;">
         <div class="success-icon">✔</div>
-        <h2>PAGO RECIBIDO</h2>
+        <h2>PEDIDO RECIBIDO</h2>
         
         <div class="resumen-caja">
             <p>Has pedido: <strong id="resumen-articulos" style="color:white;">-</strong></p>
@@ -127,7 +127,7 @@
 
         <div class="input-group">
             <input type="text" id="u-nombre" placeholder="Nombre completo" required>
-            <input type="email" id="u-email" placeholder="Email de contacto (El mismo con el que has pagado)" required>
+            <input type="email" id="u-email" placeholder="Email de contacto" required>
             <textarea id="u-notas" placeholder="Instrucciones: ¿De qué color lo quieres? ¿Algún detalle especial?" required></textarea>
         </div>
         
@@ -135,66 +135,55 @@
     </div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const totalGuardado = localStorage.getItem('totalO3D');
-    const articulosGuardados = localStorage.getItem('articulosO3D');
+    // 1. Quitamos la validación de seguridad de Stripe
+    // Solo recuperamos los datos del carrito POR SI ACASO el usuario viene de la web
+    const totalGuardado = localStorage.getItem('totalO3D') || "A consultar";
+    const articulosGuardados = localStorage.getItem('articulosO3D') || "No especificados";
 
-    // 1. Lógica de Seguridad y Validación de Importe
-    function validarAcceso() {
-        // ¿Viene de Stripe o tiene la sesión activa?
-        const tieneAcceso = urlParams.get('pagado') === 'yes' || localStorage.getItem('acceso_permitido') === 'true';
-        
-        // ¿El precio es válido y mayor que cero?
-        const tieneImporteValido = totalGuardado && parseInt(totalGuardado) > 0;
+    // Mostramos el contenido siempre, ya que este es el documento de "envío por correo"
+    document.getElementById('main-content').style.display = 'block';
+    
+    // Si hay algo en el carrito lo mostramos, si no, ponemos "Personalizado"
+    document.getElementById('resumen-articulos').innerText = articulosGuardados;
+    document.getElementById('resumen-total').innerText = totalGuardado + (totalGuardado !== "A consultar" ? "€" : "");
 
-        if (tieneAcceso && tieneImporteValido) {
-            // Todo OK: Guardamos acceso, limpiamos URL y mostramos contenido
-            localStorage.setItem('acceso_permitido', 'true');
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            document.getElementById('main-content').style.display = 'block';
-            document.getElementById('resumen-articulos').innerText = articulosGuardados;
-            document.getElementById('resumen-total').innerText = totalGuardado + "€";
-        } else {
-            // Si algo falla, mensaje de aviso y vuelta a la tienda
-            if (!tieneImporteValido && tieneAcceso) {
-                alert("No hay productos detectados en tu pedido. Volviendo a la tienda...");
-            }
-            window.location.href = "../";
-        }
-    }
-
-    // Ejecutamos la validación nada más cargar
-    validarAcceso();
-
-    async function enviarPersonalizacion() {
+async function enviarPersonalizacion() {
         const nombre = document.getElementById('u-nombre').value;
         const email = document.getElementById('u-email').value;
         const notas = document.getElementById('u-notas').value;
 
         if (!nombre || !email || !notas) return alert("Por favor, completa todos los campos.");
 
+        // Detectamos si hay un precio real o si está vacío
+        const precioTexto = (totalGuardado && totalGuardado !== "0") ? totalGuardado + "€" : "A consultar";
+
         const datos = {
             nombre: nombre,
             email: email,
             notas: notas,
-            total: totalGuardado + "€",
-            articulos: articulosGuardados,
-            estado: "PAGADO_STRIPE"
+            // Aquí combinamos el precio con el aviso de NO PAGADO
+            total: precioTexto + " (⚠️ ATENCIÓN: NO PAGADO AÚN)", 
+            articulos: articulosGuardados || "Pedido personalizado",
+            estado: "SOLICITUD_SIN_PAGO"
         };
 
-        // SUSTITUYE ESTO POR TU URL REAL DE GOOGLE APPS SCRIPT
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyulcHYSz_OD3GRKXU7RCZkxFm9pY5Xi_afdZJW_BoyEI0hK0WaWDYV3Sy1We4Sq9tf/exec";
 
-        alert("¡Perfecto! Enviando especificaciones...");
+        alert("Enviando solicitud de presupuesto..., pulse OK y espere unos segundos");
 
         try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(datos) });
-            // Limpieza total tras el éxito
+            await fetch(SCRIPT_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(datos) 
+            });
+            
+            alert("¡Solicitud enviada! Te contactaremos para gestionar el pago del/los " + precioTexto);
             localStorage.clear();
             window.location.href = "../";
         } catch (e) {
-            alert("Hubo un error al conectar. Prueba otra vez.");
+            alert("Error al enviar.");
         }
     }
 </script>
