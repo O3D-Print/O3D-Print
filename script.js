@@ -69,7 +69,10 @@ function toggleCart() {
 
 function procesarPago() {
     if (carrito.length === 0) return alert("La cesta está vacía");
-    
+    /*Quitar esto para usar el pago*/
+    alert("Proximamente");
+    return;
+    /*Hasta aquí*/
     const total = carrito.reduce((sum, p) => sum + p.precio, 0);
     const articulos = carrito.map(i => i.nombre).join(", ");
 
